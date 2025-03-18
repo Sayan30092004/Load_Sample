@@ -12,8 +12,9 @@ interface Location {
   name: string;
   country: string;
   coordinates: [number, number];
-  demandLoad: number;
-  suppliedLoad: number;
+  loadDemand: number;
+  installedCapacity: number;
+  price: number;
   blackoutProbability: number;
 }
 
@@ -29,8 +30,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     name: "New York",
     country: "USA",
     coordinates: [40.7128, -74.006],
-    demandLoad: 12500,
-    suppliedLoad: 11800,
+    loadDemand: 12500,
+    installedCapacity: 11800,
+    price: 65.8,
     blackoutProbability: 0.15,
   });
 
@@ -101,17 +103,23 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         {/* Key Metrics Section */}
         <section className="mb-6">
           <KeyMetrics
-            demandLoad={{
-              value: selectedLocation.demandLoad,
+            loadDemand={{
+              value: selectedLocation.loadDemand,
               unit: "MW",
               trend: "up",
               percentage: 8.5,
             }}
-            suppliedLoad={{
-              value: selectedLocation.suppliedLoad,
+            installedCapacity={{
+              value: selectedLocation.installedCapacity,
               unit: "MW",
               trend: "up",
               percentage: 5.2,
+            }}
+            price={{
+              value: selectedLocation.price,
+              unit: "$/MWh",
+              trend: "up",
+              percentage: 3.7,
             }}
             blackoutProbability={{
               value: Math.round(selectedLocation.blackoutProbability * 100),
@@ -144,38 +152,45 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               data={[
                 {
                   timestamp: "00:00",
-                  demand: Math.round(selectedLocation.demandLoad * 0.7),
-                  supply: Math.round(selectedLocation.suppliedLoad * 0.75),
+                  demand: Math.round(selectedLocation.loadDemand * 0.7),
+                  supply: Math.round(selectedLocation.installedCapacity * 0.75),
+                  price: Math.round(selectedLocation.price * 0.9),
                 },
                 {
                   timestamp: "04:00",
-                  demand: Math.round(selectedLocation.demandLoad * 0.5),
-                  supply: Math.round(selectedLocation.suppliedLoad * 0.6),
+                  demand: Math.round(selectedLocation.loadDemand * 0.5),
+                  supply: Math.round(selectedLocation.installedCapacity * 0.6),
+                  price: Math.round(selectedLocation.price * 0.85),
                 },
                 {
                   timestamp: "08:00",
-                  demand: Math.round(selectedLocation.demandLoad * 0.9),
-                  supply: Math.round(selectedLocation.suppliedLoad * 0.85),
+                  demand: Math.round(selectedLocation.loadDemand * 0.9),
+                  supply: Math.round(selectedLocation.installedCapacity * 0.85),
+                  price: Math.round(selectedLocation.price * 0.95),
                 },
                 {
                   timestamp: "12:00",
-                  demand: Math.round(selectedLocation.demandLoad),
-                  supply: Math.round(selectedLocation.suppliedLoad * 0.95),
+                  demand: Math.round(selectedLocation.loadDemand),
+                  supply: Math.round(selectedLocation.installedCapacity * 0.95),
+                  price: Math.round(selectedLocation.price),
                 },
                 {
                   timestamp: "16:00",
-                  demand: Math.round(selectedLocation.demandLoad * 1.1),
-                  supply: Math.round(selectedLocation.suppliedLoad * 1.05),
+                  demand: Math.round(selectedLocation.loadDemand * 1.1),
+                  supply: Math.round(selectedLocation.installedCapacity * 1.05),
+                  price: Math.round(selectedLocation.price * 1.1),
                 },
                 {
                   timestamp: "20:00",
-                  demand: Math.round(selectedLocation.demandLoad * 0.95),
-                  supply: Math.round(selectedLocation.suppliedLoad * 0.9),
+                  demand: Math.round(selectedLocation.loadDemand * 0.95),
+                  supply: Math.round(selectedLocation.installedCapacity * 0.9),
+                  price: Math.round(selectedLocation.price * 1.05),
                 },
                 {
                   timestamp: "24:00",
-                  demand: Math.round(selectedLocation.demandLoad * 0.8),
-                  supply: Math.round(selectedLocation.suppliedLoad * 0.85),
+                  demand: Math.round(selectedLocation.loadDemand * 0.8),
+                  supply: Math.round(selectedLocation.installedCapacity * 0.85),
+                  price: Math.round(selectedLocation.price * 0.95),
                 },
               ]}
             />
@@ -186,10 +201,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         <section>
           <DetailsSection
             location={selectedLocation.name}
-            peakDemand={Math.round(selectedLocation.demandLoad * 1.1)}
-            averageSupply={Math.round(selectedLocation.suppliedLoad)}
+            peakDemand={Math.round(selectedLocation.loadDemand * 1.1)}
+            averageSupply={Math.round(selectedLocation.installedCapacity)}
             supplyDeficit={Math.round(
-              selectedLocation.demandLoad * 1.1 - selectedLocation.suppliedLoad,
+              selectedLocation.loadDemand * 1.1 -
+                selectedLocation.installedCapacity,
             )}
             forecastAccuracy={92}
           />

@@ -25,41 +25,51 @@ interface HistoricalChartProps {
     timestamp: string;
     demand: number;
     supply: number;
+    price?: number;
   }>;
 }
 
 const defaultData = [
-  { timestamp: "00:00", demand: 120, supply: 130 },
-  { timestamp: "04:00", demand: 100, supply: 120 },
-  { timestamp: "08:00", demand: 180, supply: 170 },
-  { timestamp: "12:00", demand: 220, supply: 200 },
-  { timestamp: "16:00", demand: 240, supply: 230 },
-  { timestamp: "20:00", demand: 190, supply: 180 },
-  { timestamp: "24:00", demand: 140, supply: 150 },
+  { timestamp: "00:00", demand: 120, supply: 130, price: 58 },
+  { timestamp: "04:00", demand: 100, supply: 120, price: 55 },
+  { timestamp: "08:00", demand: 180, supply: 170, price: 62 },
+  { timestamp: "12:00", demand: 220, supply: 200, price: 68 },
+  { timestamp: "16:00", demand: 240, supply: 230, price: 72 },
+  { timestamp: "20:00", demand: 190, supply: 180, price: 65 },
+  { timestamp: "24:00", demand: 140, supply: 150, price: 60 },
 ];
 
 const weekData = [
-  { timestamp: "Mon", demand: 150, supply: 160 },
-  { timestamp: "Tue", demand: 170, supply: 165 },
-  { timestamp: "Wed", demand: 190, supply: 180 },
-  { timestamp: "Thu", demand: 210, supply: 200 },
-  { timestamp: "Fri", demand: 230, supply: 220 },
-  { timestamp: "Sat", demand: 180, supply: 190 },
-  { timestamp: "Sun", demand: 160, supply: 170 },
+  { timestamp: "Mon", demand: 150, supply: 160, price: 60 },
+  { timestamp: "Tue", demand: 170, supply: 165, price: 63 },
+  { timestamp: "Wed", demand: 190, supply: 180, price: 66 },
+  { timestamp: "Thu", demand: 210, supply: 200, price: 69 },
+  { timestamp: "Fri", demand: 230, supply: 220, price: 72 },
+  { timestamp: "Sat", demand: 180, supply: 190, price: 64 },
+  { timestamp: "Sun", demand: 160, supply: 170, price: 61 },
 ];
 
 const monthData = [
-  { timestamp: "Week 1", demand: 170, supply: 180 },
-  { timestamp: "Week 2", demand: 190, supply: 185 },
-  { timestamp: "Week 3", demand: 210, supply: 200 },
-  { timestamp: "Week 4", demand: 230, supply: 220 },
+  { timestamp: "Jan", demand: 170, supply: 180, price: 62 },
+  { timestamp: "Feb", demand: 190, supply: 185, price: 64 },
+  { timestamp: "Mar", demand: 210, supply: 200, price: 66 },
+  { timestamp: "Apr", demand: 230, supply: 220, price: 68 },
+  { timestamp: "May", demand: 250, supply: 240, price: 70 },
+  { timestamp: "Jun", demand: 270, supply: 260, price: 72 },
+  { timestamp: "Jul", demand: 290, supply: 280, price: 74 },
+  { timestamp: "Aug", demand: 280, supply: 270, price: 73 },
+  { timestamp: "Sep", demand: 260, supply: 250, price: 71 },
+  { timestamp: "Oct", demand: 240, supply: 230, price: 69 },
+  { timestamp: "Nov", demand: 220, supply: 210, price: 67 },
+  { timestamp: "Dec", demand: 200, supply: 190, price: 65 },
 ];
 
 const HistoricalChart: React.FC<HistoricalChartProps> = ({
   locationName = "New York City",
   data = defaultData,
 }) => {
-  const [timeRange, setTimeRange] = useState("day");
+  const [timeRange, setTimeRange] = useState("month");
+  const [chartType, setChartType] = useState("demand");
   const [chartData, setChartData] = useState(data);
 
   // Handle time range change
@@ -84,10 +94,23 @@ const HistoricalChart: React.FC<HistoricalChartProps> = ({
     <Card className="w-full h-full bg-white shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-xl font-bold">
-          Historical Demand vs Supply
+          {chartType === "demand" ? "Load Demand vs Month" : "Price vs Month"}
         </CardTitle>
         <div className="flex items-center space-x-2">
-          <span className="text-sm text-gray-500">Time Range:</span>
+          <span className="text-sm text-gray-500">View:</span>
+          <Select
+            value={chartType}
+            onValueChange={(value) => setChartType(value)}
+          >
+            <SelectTrigger className="w-[120px]">
+              <SelectValue placeholder="Select view" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="demand">Load Demand</SelectItem>
+              <SelectItem value="price">Price</SelectItem>
+            </SelectContent>
+          </Select>
+          <span className="text-sm text-gray-500 ml-2">Time Range:</span>
           <Select value={timeRange} onValueChange={handleTimeRangeChange}>
             <SelectTrigger className="w-[120px]">
               <SelectValue placeholder="Select range" />
@@ -124,7 +147,7 @@ const HistoricalChart: React.FC<HistoricalChartProps> = ({
               <XAxis dataKey="timestamp" />
               <YAxis
                 label={{
-                  value: "Load (MW)",
+                  value: chartType === "demand" ? "Load (MW)" : "Price ($/MWh)",
                   angle: -90,
                   position: "insideLeft",
                 }}
@@ -135,45 +158,76 @@ const HistoricalChart: React.FC<HistoricalChartProps> = ({
                   borderRadius: "8px",
                   border: "1px solid #e2e8f0",
                 }}
-                formatter={(value) => [`${value} MW`, undefined]}
+                formatter={(value, name) => {
+                  if (name === "Price") return [`${value} $/MWh`, name];
+                  return [`${value} MW`, name];
+                }}
               />
               <Legend />
-              <Line
-                type="monotone"
-                dataKey="demand"
-                stroke="#ef4444"
-                strokeWidth={2}
-                dot={{ r: 4 }}
-                activeDot={{ r: 6 }}
-                name="Demand Load"
-              />
-              <Line
-                type="monotone"
-                dataKey="supply"
-                stroke="#3b82f6"
-                strokeWidth={2}
-                dot={{ r: 4 }}
-                activeDot={{ r: 6 }}
-                name="Supplied Load"
-              />
+              {chartType === "demand" ? (
+                <>
+                  <Line
+                    type="monotone"
+                    dataKey="demand"
+                    stroke="#ef4444"
+                    strokeWidth={2}
+                    dot={{ r: 4 }}
+                    activeDot={{ r: 6 }}
+                    name="Load Demand"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="supply"
+                    stroke="#3b82f6"
+                    strokeWidth={2}
+                    dot={{ r: 4 }}
+                    activeDot={{ r: 6 }}
+                    name="Installed Capacity"
+                  />
+                </>
+              ) : (
+                <Line
+                  type="monotone"
+                  dataKey="price"
+                  stroke="#10b981"
+                  strokeWidth={2}
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 6 }}
+                  name="Price"
+                />
+              )}
             </LineChart>
           </ResponsiveContainer>
         </div>
-        <div className="flex justify-between mt-4 text-sm text-gray-500">
-          <div className="flex items-center">
-            <div className="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
-            <span>Demand Load</span>
+        {chartType === "demand" ? (
+          <div className="flex justify-between mt-4 text-sm text-gray-500">
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
+              <span>Load Demand</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
+              <span>Installed Capacity</span>
+            </div>
+            <div className="flex items-center">
+              <span className="text-xs italic">
+                Gap indicates potential supply deficit
+              </span>
+            </div>
           </div>
-          <div className="flex items-center">
-            <div className="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
-            <span>Supplied Load</span>
+        ) : (
+          <div className="flex justify-between mt-4 text-sm text-gray-500">
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+              <span>Price ($/MWh)</span>
+            </div>
+            <div className="flex items-center">
+              <span className="text-xs italic">
+                Price fluctuations over time
+              </span>
+            </div>
           </div>
-          <div className="flex items-center">
-            <span className="text-xs italic">
-              Gap indicates potential supply deficit
-            </span>
-          </div>
-        </div>
+        )}
       </CardContent>
     </Card>
   );

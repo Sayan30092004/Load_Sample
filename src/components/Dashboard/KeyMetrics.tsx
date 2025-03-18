@@ -1,15 +1,28 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowDown, ArrowUp, Zap, Battery, AlertTriangle } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  Zap,
+  Battery,
+  AlertTriangle,
+  DollarSign,
+} from "lucide-react";
 
 interface KeyMetricsProps {
-  demandLoad?: {
+  loadDemand?: {
     value: number;
     unit: string;
     trend: "up" | "down" | "neutral";
     percentage: number;
   };
-  suppliedLoad?: {
+  installedCapacity?: {
+    value: number;
+    unit: string;
+    trend: "up" | "down" | "neutral";
+    percentage: number;
+  };
+  price?: {
     value: number;
     unit: string;
     trend: "up" | "down" | "neutral";
@@ -24,17 +37,23 @@ interface KeyMetricsProps {
 }
 
 const KeyMetrics: React.FC<KeyMetricsProps> = ({
-  demandLoad = {
+  loadDemand = {
     value: 1250,
     unit: "MW",
     trend: "up",
     percentage: 8.5,
   },
-  suppliedLoad = {
+  installedCapacity = {
     value: 1180,
     unit: "MW",
     trend: "up",
     percentage: 5.2,
+  },
+  price = {
+    value: 65.8,
+    unit: "$/MWh",
+    trend: "up",
+    percentage: 3.7,
   },
   blackoutProbability = {
     value: 12,
@@ -57,61 +76,93 @@ const KeyMetrics: React.FC<KeyMetricsProps> = ({
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full bg-white p-4 rounded-lg">
-      {/* Demand Load Card */}
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 w-full bg-white p-4 rounded-lg">
+      {/* Load Demand Card */}
       <Card className="shadow-sm">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground flex items-center">
             <Zap className="h-4 w-4 mr-2 text-amber-500" />
-            Demand Load
+            Load Demand
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col space-y-1">
             <div className="text-2xl font-bold">
-              {demandLoad.value}{" "}
-              <span className="text-sm font-normal">{demandLoad.unit}</span>
+              {loadDemand.value}{" "}
+              <span className="text-sm font-normal">{loadDemand.unit}</span>
             </div>
             <div className="flex items-center">
-              {demandLoad.trend === "up" ? (
+              {loadDemand.trend === "up" ? (
                 <ArrowUp className="h-4 w-4 text-red-500 mr-1" />
-              ) : demandLoad.trend === "down" ? (
+              ) : loadDemand.trend === "down" ? (
                 <ArrowDown className="h-4 w-4 text-green-500 mr-1" />
               ) : null}
               <span
-                className={`text-xs ${demandLoad.trend === "up" ? "text-red-500" : "text-green-500"}`}
+                className={`text-xs ${loadDemand.trend === "up" ? "text-red-500" : "text-green-500"}`}
               >
-                {demandLoad.percentage}% from last period
+                {loadDemand.percentage}% from last period
               </span>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Supplied Load Card */}
+      {/* Installed Capacity Card */}
       <Card className="shadow-sm">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground flex items-center">
             <Battery className="h-4 w-4 mr-2 text-blue-500" />
-            Supplied Load
+            Installed Capacity
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col space-y-1">
             <div className="text-2xl font-bold">
-              {suppliedLoad.value}{" "}
-              <span className="text-sm font-normal">{suppliedLoad.unit}</span>
+              {installedCapacity.value}{" "}
+              <span className="text-sm font-normal">
+                {installedCapacity.unit}
+              </span>
             </div>
             <div className="flex items-center">
-              {suppliedLoad.trend === "up" ? (
+              {installedCapacity.trend === "up" ? (
                 <ArrowUp className="h-4 w-4 text-green-500 mr-1" />
-              ) : suppliedLoad.trend === "down" ? (
+              ) : installedCapacity.trend === "down" ? (
                 <ArrowDown className="h-4 w-4 text-red-500 mr-1" />
               ) : null}
               <span
-                className={`text-xs ${suppliedLoad.trend === "up" ? "text-green-500" : "text-red-500"}`}
+                className={`text-xs ${installedCapacity.trend === "up" ? "text-green-500" : "text-red-500"}`}
               >
-                {suppliedLoad.percentage}% from last period
+                {installedCapacity.percentage}% from last period
+              </span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Price Card */}
+      <Card className="shadow-sm">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium text-muted-foreground flex items-center">
+            <DollarSign className="h-4 w-4 mr-2 text-green-500" />
+            Price
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col space-y-1">
+            <div className="text-2xl font-bold">
+              {price.value}{" "}
+              <span className="text-sm font-normal">{price.unit}</span>
+            </div>
+            <div className="flex items-center">
+              {price.trend === "up" ? (
+                <ArrowUp className="h-4 w-4 text-red-500 mr-1" />
+              ) : price.trend === "down" ? (
+                <ArrowDown className="h-4 w-4 text-green-500 mr-1" />
+              ) : null}
+              <span
+                className={`text-xs ${price.trend === "up" ? "text-red-500" : "text-green-500"}`}
+              >
+                {price.percentage}% from last period
               </span>
             </div>
           </div>

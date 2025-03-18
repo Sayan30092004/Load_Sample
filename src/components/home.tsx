@@ -45,7 +45,7 @@ const Home: React.FC = () => {
           </div>
 
           {/* Overlay gradient for better text visibility */}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/70 z-10"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0a1128]/80 z-10"></div>
 
           {/* Header */}
           <header className="relative z-20 container mx-auto px-4 py-6">
@@ -85,14 +85,39 @@ const Home: React.FC = () => {
           {/* Main Content with Call to Action */}
           <main className="relative z-20 container mx-auto px-4 flex items-center justify-center h-[calc(100vh-80px)]">
             <div className="max-w-4xl mx-auto text-center">
-              <motion.h1
-                className="text-5xl md:text-6xl font-bold mb-6"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.6 }}
-              >
-                Interactive Load Forecasting Dashboard
-              </motion.h1>
+              <motion.div className="flex flex-col items-center justify-center mb-6">
+                <motion.div
+                  className="text-[#4287f5] mb-4"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.1, duration: 0.5 }}
+                >
+                  <svg
+                    width="60"
+                    height="60"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M13 3L4 14H13L11 21L20 10H11L13 3Z"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </motion.div>
+                <motion.h1
+                  className="text-5xl md:text-6xl font-bold"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2, duration: 0.6 }}
+                >
+                  <span className="text-white">Energy Load </span>
+                  <span className="text-[#4287f5]">Forecasting</span>
+                </motion.h1>
+              </motion.div>
 
               <motion.p
                 className="text-xl md:text-2xl mb-12 text-gray-300 max-w-3xl mx-auto"
@@ -100,8 +125,9 @@ const Home: React.FC = () => {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4, duration: 0.6 }}
               >
-                Visualize real-time electricity demand, supply, and blackout
-                probability data for locations worldwide.
+                Predict energy demand and supply with our advanced AI-powered
+                platform. Visualize global energy metrics and prevent blackouts
+                before they happen.
               </motion.p>
 
               <CallToAction onButtonClick={handleTryNowClick} />
